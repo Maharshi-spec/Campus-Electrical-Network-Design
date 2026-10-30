@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CampusGrid | Electrical Network Optimizer</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#10224a;--muted:#6b7b9c;--blue:#1668f3;--green:#07a56b;--line:#e4ecf8;--bg:#f2f7ff;--sh:0 8px 26px rgba(33,67,125,.07)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:"DM Sans",sans-serif}button,select,input{font:inherit}button{cursor:pointer}
+svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.app{display:grid;grid-template-columns:250px minmax(0,1fr);min-height:100vh}
+.sidebar{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;padding:22px 14px 0;background:linear-gradient(180deg,#e6f0ff,#f4f8ff 55%);border-right:1px solid #dbe6f6;overflow:hidden}
+.brand{display:flex;gap:11px;align-items:center;padding:0 8px 22px;color:#15336e}.brand svg{width:40px;height:40px;stroke-width:2.2}.brand b{display:block;font:800 20px Manrope,sans-serif;letter-spacing:-.5px;color:var(--ink)}.brand small{font-size:10.5px;color:var(--muted)}
+.nav{display:grid;gap:5px}.nav button{display:flex;gap:13px;align-items:center;border:0;background:none;padding:13px 14px;border-radius:11px;color:#3f5278;font-size:14.5px;text-align:left}.nav button:hover{background:#ffffffa0}.nav button.active{background:#d3e4ff;color:#0a5be0;font-weight:700}
+.side-photo{flex:1;margin:22px -14px 0;position:relative;min-height:160px;background:url(assets/campus-aerial.jpg) 30% center/cover}.side-photo:before{content:"";position:absolute;inset:0;background:linear-gradient(#eaf3ff,transparent 30%)}
+main{min-width:0;padding-bottom:30px}.pad{padding:0 26px}
+.hero{height:178px;padding:0 26px;display:flex;align-items:center;background:linear-gradient(90deg,#f2f7ff 0%,#f2f7fff2 32%,#f2f7ff00 62%),url(assets/campus-banner.jpg) right 40%/cover;margin-bottom:18px}
+.hero h1{margin:0 0 6px;font:800 clamp(26px,3vw,42px) Manrope,sans-serif;letter-spacing:-1.3px;line-height:1.1}.hero h1 span{color:var(--blue)}.hero p{margin:0;color:#4a5d83;font-size:clamp(13px,1.2vw,17px)}
+.page{display:none}.page.active{display:block;animation:f .25s}@keyframes f{from{opacity:.4;transform:translateY(4px)}}
+.card,.kpi{background:#fff;border:1px solid var(--line);border-radius:15px;box-shadow:var(--sh)}.card{padding:18px}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px;margin-bottom:17px}.kpi{display:flex;gap:14px;align-items:center;padding:17px}
+.ki{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;flex-shrink:0}.ki svg{width:26px;height:26px}.r{background:#fff0ef;color:#ee5560}.g{background:#dcf9ec;color:var(--green)}.b{background:#e5f0ff;color:var(--blue)}.p{background:#f0e9ff;color:#7d45e6}
+.kl{font-size:12.5px;color:#475a80;margin-bottom:3px}.kv{font:800 clamp(19px,1.8vw,27px) Manrope,sans-serif;letter-spacing:-.5px;white-space:nowrap}.kn{font-size:11.5px;color:var(--muted);margin-top:3px}.kn.ok{color:var(--green);font-weight:600}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:16px}.col{display:grid;gap:16px;align-content:start}
+.head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}h2{margin:0;font:800 17px Manrope,sans-serif;letter-spacing:-.3px}
+.legend{display:flex;gap:16px;font-size:11.5px;color:var(--muted)}.legend i{display:inline-block;width:26px;border-top:3px solid #0bb878;vertical-align:middle;margin-right:6px;border-radius:3px}.legend i.d{border-top:2px dashed #9aa9c4}
+.mapf{position:relative;height:370px;border-radius:12px;overflow:hidden;background:#27402f;touch-action:none;cursor:grab}.mapf.tall{height:min(66vh,600px)}.mapf svg{width:100%;height:100%;display:block}
+.zoom{position:absolute;right:12px;bottom:12px;display:grid;gap:6px}.zoom button{width:34px;height:34px;border:0;border-radius:9px;background:#fff;font-size:20px;color:#20375f;box-shadow:0 3px 10px #0003}
+.ok-box{background:#eefbf5;border-radius:12px;padding:14px;color:var(--green);font-weight:700;font-size:14px}.ok-box small{display:block;margin-top:7px;font-weight:400;color:var(--muted);line-height:1.5;font-size:12.5px}
+.stats{background:#f6f9ff;border:1px solid #e7eef8;border-radius:12px;padding:14px;display:grid;gap:15px;margin-top:13px}.stat{display:flex;gap:13px;align-items:center}.stat svg{width:26px;height:26px;color:#1d4d9b}.stat b{display:block;font-size:15px}.stat small{color:var(--muted);font-size:12px}
+.qa{display:grid;gap:9px}.qa button{display:flex;align-items:center;gap:12px;border:0;border-radius:11px;padding:11px;background:#f0f6ff;color:#1f3a66;font-weight:500;font-size:13.5px;text-align:left}.qa button i{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;flex-shrink:0}.qa button i svg{width:18px;height:18px}.qa button>svg{margin-left:auto;width:16px;color:#4a5d83}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:13px;white-space:nowrap}th{background:#eff5ff;color:#526788;font-weight:600;text-align:left;padding:11px 14px}td{padding:11px 14px;border-bottom:1px solid #edf1f7;color:#42557a}tr:last-child td{border:0}.good{color:var(--green);font-weight:700}.bad{color:#e04a58;font-weight:700}
+.title{margin:2px 0 16px}.title h2{font-size:26px;margin-bottom:5px}.title p{margin:0;color:var(--muted);font-size:14px}
+.btn{border:0;border-radius:9px;padding:11px 15px;font-weight:700;background:var(--blue);color:#fff}.btn:hover{background:#0a58dc}.btn.s{background:#fff;color:#33496f;border:1px solid #d6e2f2;font-weight:600}.btn:disabled{opacity:.45;cursor:default}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.step{display:flex;gap:12px;padding:10px 12px;border-radius:10px;background:#f7faff;border:1px solid #eaf0fa;font-size:13px;align-items:center}.step.cur{background:#eaf3ff;border-color:#a8c9ff}.step .n{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:12px;flex-shrink:0;background:#e1edff;color:#145dd5}.step.A .n{background:#d8f6e8;color:var(--green)}.step.R .n{background:#ffe4e6;color:#e04a58}.step small{display:block;color:var(--muted);margin-top:2px}.steps{display:grid;gap:7px;max-height:420px;overflow:auto;margin:12px 0}
+input[type=range]{width:100%;accent-color:var(--blue)}.f{display:grid;gap:6px;margin-bottom:12px}.f label{font-size:12px;font-weight:700;color:#506281}.f input,.f select{border:1px solid #dce6f3;border-radius:9px;padding:11px;width:100%;background:#fff;color:var(--ink)}
+.bl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.bi{display:flex;gap:11px;align-items:center;padding:13px;border:1px solid var(--line);border-radius:12px}.bi i{width:36px;height:36px;border-radius:10px;background:#e8f2ff;color:var(--blue);display:grid;place-items:center;font:800 15px Manrope,sans-serif;font-style:normal}.bi small{color:var(--muted);font-size:11.5px;display:block}
+.bars{display:flex;align-items:end;gap:40px;height:240px;padding:28px 30px 0;border-bottom:1px solid #dbe5f3}.bg{flex:1;height:100%;display:flex;flex-direction:column;justify-content:end;align-items:center;gap:8px}.bar{width:min(100%,120px);border-radius:9px 9px 0 0;position:relative}.bar b{position:absolute;top:-24px;left:50%;transform:translateX(-50%);font-size:13px}.bg small{color:var(--muted);font-size:12px;text-align:center;margin:6px 0 -34px}
+.note{font-size:12.5px;color:var(--muted);line-height:1.6;background:#f6f9ff;padding:12px;border-radius:10px;margin-top:12px}.msg{font-size:12.5px;color:var(--muted);margin-top:10px;min-height:18px}
+.mh,.mnav{display:none}
+@media(max-width:1150px){.app{grid-template-columns:210px 1fr}.kpis{grid-template-columns:1fr 1fr}.grid{grid-template-columns:minmax(0,1fr) 260px}}
+@media(max-width:800px){.app{display:block}.sidebar{display:none}.mh{display:flex;position:sticky;top:0;z-index:20;justify-content:space-between;align-items:center;padding:10px 14px;background:#f6f9ffee;backdrop-filter:blur(10px);border-bottom:1px solid var(--line);font:800 17px Manrope,sans-serif}.mh button{border:1px solid #dbe6f5;background:#fff;border-radius:9px;padding:8px 12px}
+.mnav.open{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:8px;background:#fff;position:sticky;top:54px;z-index:19;border-bottom:1px solid var(--line)}.mnav button{border:0;border-radius:8px;padding:10px 4px;background:#f1f6ff;color:#405477;font-size:12px}.mnav button.active{background:#d8e8ff;color:#0a5be0;font-weight:700}
+.pad,.hero{padding:0 14px}.hero{height:140px;background:linear-gradient(90deg,#f2f7ff 0%,#f2f7ffe6 60%,#f2f7ff55 100%),url(assets/campus-banner.jpg) right 40%/cover}.mapf{height:320px}.kpis{gap:10px}.kpi{padding:12px;gap:9px}.ki{width:38px;height:38px}.ki svg{width:19px;height:19px}.kl{font-size:11px}.grid{grid-template-columns:1fr}.bl{grid-template-columns:1fr}.bars{gap:16px;padding:28px 6px 0}}
+@media(max-width:430px){.kpi{flex-direction:column;align-items:flex-start}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute"><defs>
+<symbol id="home" viewBox="0 0 24 24"><path d="m3 11 9-8 9 8M5 9.5V21h5v-6h4v6h5V9.5"/></symbol>
+<symbol id="map" viewBox="0 0 24 24"><path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3zM9 3v15M15 6v15"/></symbol>
+<symbol id="nodes" viewBox="0 0 24 24"><circle cx="5" cy="6" r="2.2"/><circle cx="19" cy="6" r="2.2"/><circle cx="12" cy="19" r="2.2"/><path d="m7 7 4 10M17 7l-4 10M7.2 6h9.6"/></symbol>
+<symbol id="bars" viewBox="0 0 24 24"><path d="M5 20v-7M12 20V4M19 20v-11"/></symbol>
+<symbol id="bld" viewBox="0 0 24 24"><path d="M5 21V4h10v17M15 9h4v12M3 21h18M9 8h2M9 12h2M9 16h2"/></symbol>
+<symbol id="sl" viewBox="0 0 24 24"><path d="M4 21v-6M4 11V3M12 21v-9M12 8V3M20 21v-4M20 13V3M1 15h6M9 8h6M17 17h6"/></symbol>
+<symbol id="link" viewBox="0 0 24 24"><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></symbol>
+<symbol id="bolt" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z" fill="currentColor"/></symbol>
+<symbol id="edit" viewBox="0 0 24 24"><path d="M12 4H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h13a2 2 0 0 0 2-2v-7M18 3l3 3-9 9H9v-3z"/></symbol>
+<symbol id="chev" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
+<symbol id="ban" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m5.6 5.6 12.8 12.8"/></symbol>
+</defs></svg>
+<div class="mh"><span>CampusGrid</span><button id="menu">☰ Menu</button></div>
+<div class="mnav" id="mnav"></div>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand"><svg class="i"><use href="#bld"/></svg><div><b>CampusGrid</b><small>Electrical Network Optimizer</small></div></div>
+  <nav class="nav" id="nav"></nav><div class="side-photo"></div>
+</aside>
+<main>
+<header class="hero"><div><h1>Campus <span>Electrical Network Design</span></h1><p>Minimum Spanning Tree using Kruskal's Algorithm</p></div></header>
+<div class="pad">
+
+<section class="page active" id="p-overview">
+  <div class="kpis">
+    <div class="kpi"><div class="ki r"><svg class="i"><use href="#link"/></svg></div><div><div class="kl">Total Possible Cost</div><div class="kv" id="kAll"></div><div class="kn">All possible connections</div></div></div>
+    <div class="kpi"><div class="ki g"><svg class="i"><use href="#bolt"/></svg></div><div><div class="kl">Minimum Spanning Tree Cost</div><div class="kv" id="kMst"></div><div class="kn">Optimized network</div></div></div>
+    <div class="kpi"><div class="ki b"><svg class="i"><use href="#bars"/></svg></div><div><div class="kl">Total Savings</div><div class="kv" id="kPct"></div><div class="kn ok" id="kSave"></div></div></div>
+    <div class="kpi"><div class="ki p"><svg class="i"><use href="#bld"/></svg></div><div><div class="kl">Buildings Connected</div><div class="kv" id="kBld"></div><div class="kn">Complete network</div></div></div>
+  </div>
+  <div class="grid">
+    <div class="col">
+      <div class="card"><div class="head"><h2>Campus Map &amp; Network</h2><div class="legend"><span><i></i>MST Connection</span><span><i class="d"></i>Possible Connection</span></div></div>
+        <div class="mapf" id="mf1"><svg id="m1"></svg><div class="zoom"><button data-z="1.25" data-m="1" aria-label="Zoom in">+</button><button data-z=".8" data-m="1" aria-label="Zoom out">−</button></div></div></div>
+      <div class="card"><div class="head"><h2>Recent Results</h2><span class="kn" id="stamp"></span></div><div class="tw"><table><thead><tr><th>#</th><th>Description</th><th>Buildings</th><th>Total Cost (₹)</th><th>Savings</th><th>Calculated</th></tr></thead><tbody id="res"></tbody></table></div></div>
+    </div>
+    <div class="col">
+      <div class="card"><h2 style="margin-bottom:13px">Network Status</h2><div class="ok-box" id="okbox"></div>
+        <div class="stats"><div class="stat"><svg class="i"><use href="#bld"/></svg><div><b id="sB"></b><small>Buildings connected</small></div></div><div class="stat"><svg class="i"><use href="#nodes"/></svg><div><b id="sE"></b><small>Cable connections (edges)</small></div></div><div class="stat"><svg class="i"><use href="#ban"/></svg><div><b id="sI">0</b><small>Isolated buildings</small></div></div></div></div>
+      <div class="card"><h2 style="margin-bottom:13px">Quick Actions</h2><div class="qa">
+        <button data-go="algorithm"><i style="background:#dbeaff;color:#1668f3"><svg class="i"><use href="#map"/></svg></i>View Algorithm Steps<svg class="i"><use href="#chev"/></svg></button>
+        <button data-go="cost"><i style="background:#ffe9d2;color:#f08a1c"><svg class="i"><use href="#bars"/></svg></i>See Cost Analysis<svg class="i"><use href="#chev"/></svg></button>
+        <button data-go="scenarios"><i style="background:#d9f6e8;color:#07a56b"><svg class="i"><use href="#edit"/></svg></i>Try a New Scenario<svg class="i"><use href="#chev"/></svg></button></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="page" id="p-map"><div class="title"><h2>Campus Map</h2><p>Satellite view of the campus with candidate routes and the selected MST. Drag to pan, use +/− to zoom.</p></div>
+  <div class="card"><div class="head"><div class="legend"><span><i></i>MST edge</span><span><i class="d"></i>Candidate route</span></div><div class="row"><button class="btn s" id="tgl">Show/hide candidates</button><button class="btn" data-go="algorithm">Run Kruskal →</button></div></div>
+  <div class="mapf tall" id="mf2"><svg id="m2"></svg><div class="zoom"><button data-z="1.25" data-m="2" aria-label="Zoom in">+</button><button data-z=".8" data-m="2" aria-label="Zoom out">−</button></div></div><div class="msg" id="placeMsg"></div></div></section>
+
+<section class="page" id="p-algorithm"><div class="title"><h2>Kruskal's Algorithm</h2><p>Edges are sorted by cost; each is accepted unless it would create a cycle (checked with Union-Find).</p></div>
+  <div class="grid"><div class="col"><div class="card"><div class="head"><h2>Algorithm progress</h2><span class="kn" id="stepLbl"></span></div>
+    <div class="mapf" id="mf3" style="height:340px"><svg id="m3"></svg></div>
+    <div class="steps" id="steps"></div>
+    <div class="row"><button class="btn s" id="prev">← Previous</button><button class="btn" id="next">Next Step →</button><button class="btn s" id="reset">Reset</button><button class="btn s" id="play">▶ Auto play</button></div>
+    <input type="range" id="rng" min="0" value="0" style="margin-top:14px" aria-label="Algorithm step"></div></div>
+  <div class="col"><div class="card"><h2>Live result</h2><div class="kn" style="margin-top:14px">Selected edges</div><div class="kv" id="lSel"></div><div class="kn" style="margin-top:14px">Current selected cost</div><div class="kv" id="lCost"></div><div class="kn" style="margin-top:14px">Rejected (cycle)</div><div class="kv" id="lRej"></div><div class="note">A spanning tree of V buildings has exactly V − 1 edges and no cycles.</div></div></div></div></section>
+
+<section class="page" id="p-cost"><div class="title"><h2>Cost Analysis</h2><p>Baseline (every candidate route) versus the optimized MST plan.</p></div>
+  <div class="kpis" id="costK"></div>
+  <div class="grid"><div class="card"><div class="head"><h2>Installation Cost Comparison</h2><span class="kn">Illustrative costs</span></div><div class="bars"><div class="bg"><div class="bar" id="bA" style="background:linear-gradient(#ff9eaa,#f45b6a)"></div><small>All possible<br>connections</small></div><div class="bg"><div class="bar" id="bM" style="background:linear-gradient(#6fe9b4,#0ba66c)"></div><small>Minimum spanning<br>tree</small></div></div></div>
+  <div class="card"><h2>Selected cables</h2><div class="tw" style="margin-top:10px"><table><tbody id="cab"></tbody></table></div></div></div></section>
+
+<section class="page" id="p-buildings"><div class="title"><h2>Buildings</h2><p>Campus locations represented as graph vertices.</p></div>
+  <div class="card"><div class="head"><h2>Campus buildings</h2><button class="btn" data-go="scenarios">+ Add building</button></div><div class="bl" id="bl"></div></div></section>
+
+<section class="page" id="p-scenarios"><div class="title"><h2>Scenarios &amp; What-if Analysis</h2><p>Changes recalculate the MST, savings and every chart.</p></div>
+  <div class="grid"><div class="card"><h2 style="margin-bottom:16px">Add a building</h2><div class="f"><label for="nb">Building name</label><input id="nb" maxlength="30" placeholder="e.g. New Science Lab"></div>
+    <button class="btn" id="addB">Place on map →</button><div class="msg" id="mB"></div><div class="note">After pressing the button, click the spot on the campus map. The new building is linked to its 3 nearest buildings at ₹ 5 per map unit (≈ the demo rate).</div></div>
+  <div class="card"><h2 style="margin-bottom:16px">Modify a route cost</h2><div class="f"><label for="rs">Candidate route</label><select id="rs"></select></div><div class="f"><label for="rc">New cost (₹)</label><input id="rc" type="number" min="0" step="10"></div>
+    <div class="row"><button class="btn" id="upR">Update &amp; recalculate</button><button class="btn s" id="rstAll">Reset all</button></div><div class="msg" id="mR"></div></div></div></section>
+
+</div></main></div>
+<script>
+const IMG={w:1840,h:764},RATE=4.985;
+const BASE_N=[["Hostel",190,615,"u"],["Sports Complex",385,500,"d"],["Science Block",600,405,"u"],["Medical Center",660,705,"u"],["Cafeteria",690,500,"d"],["Library",730,365,"d"],["Admin Block",890,380,"d"],["Main Auditorium",1085,480,"u"],["Engineering Block",1420,470,"d"],["Lecture Hall",1560,425,"u"]];
+const BASE_E=[[2,4,650],[2,5,680],[8,9,730],[5,6,800],[3,4,1030],[6,7,1090],[0,1,1130],[1,2,1170],[7,8,1680],[4,5,710],[4,6,1180],[2,6,1470],[1,4,1540],[2,3,1550],[1,3,1740],[3,5,1760],[1,5,1880],[5,7,1890],[4,7,2000]];
+let N,E,R,step=0,timer,placing=null,showCand=true;
+const $=id=>document.getElementById(id),inr=v=>"₹ "+Math.round(v).toLocaleString("en-IN");
+function load(){N=BASE_N.map(n=>({name:n[0],x:n[1],y:n[2],l:n[3]}));E=BASE_E.map(e=>({a:e[0],b:e[1],c:e[2]}));calc();}
+function calc(){ // Kruskal + Union-Find, everything below derives from this
+  const p=N.map((_,i)=>i),f=x=>{while(p[x]!==x)x=p[x]=p[p[x]];return x};
+  const sorted=E.map((e,i)=>({...e,i})).sort((u,v)=>u.c-v.c||u.i-v.i);let tot=0,mst=0,k=0;
+  const log=sorted.map(e=>{const ra=f(e.a),rb=f(e.b);let s="S";if(k<N.length-1){if(ra!==rb){p[ra]=rb;s="A";mst+=e.c;k++}else s="R"}return{...e,s}});
+  tot=E.reduce((s,e)=>s+e.c,0);
+  const deg=N.map(()=>0);log.forEach(e=>{if(e.s==="A"){deg[e.a]++;deg[e.b]++}});
+  R={log,tot,mst,k,deg,iso:deg.filter(d=>!d).length,pct:tot?(tot-mst)/tot*100:0,when:new Date()};step=Math.min(step,log.length);}
+const nm=i=>N[i].name,ename=e=>nm(e.a)+" — "+nm(e.b);
+/* ---------- map ---------- */
+const maps={};
+function mapInit(sid,fid){const m=maps[sid]={svg:$(sid),box:$(fid),v:null,upto:null};
+  const sv=m.svg;let drag=null,moved=0;
+  sv.addEventListener("pointerdown",e=>{drag={x:e.clientX,y:e.clientY};moved=0;sv.setPointerCapture(e.pointerId)});
+  sv.addEventListener("pointermove",e=>{if(!drag||!m.v)return;const k=m.v.w/m.box.clientWidth,dx=e.clientX-drag.x,dy=e.clientY-drag.y;moved+=Math.abs(dx)+Math.abs(dy);m.v.x-=dx*k;m.v.y-=dy*k;drag={x:e.clientX,y:e.clientY};vb(m)});
+  sv.addEventListener("pointerup",e=>{drag=null;if(moved<5&&placing&&sid==="m2")place(m,e)});
+  new ResizeObserver(()=>{fit(m);draw(m)}).observe(m.box);}
+function fit(m){const W=m.box.clientWidth,H=m.box.clientHeight;if(!W)return;const xs=N.map(n=>n.x),ys=N.map(n=>n.y),pad=170;
+  const bx=Math.min(...xs)-pad,bw=Math.max(...xs)+pad-bx,by=Math.min(...ys)-110,bh=Math.max(...ys)+110-by,a=W/H;
+  let w=Math.max(bw,bh*a),h=w/a;if(h>IMG.h){h=IMG.h;w=h*a}if(w>IMG.w){w=IMG.w;h=w/a}let x=bx+bw/2-w/2,y=by+bh/2-h/2;y=Math.min(Math.max(0,y),IMG.h-h);x=Math.min(Math.max(0,x),IMG.w-w);m.v={x,y,w,h};vb(m);}
+function vb(m){const v=m.v;m.v.h=v.w*m.box.clientHeight/m.box.clientWidth;m.svg.setAttribute("viewBox",`${v.x} ${v.y} ${v.w} ${v.h}`);draw(m,1)}
+function zoom(m,z){const v=m.v,cx=v.x+v.w/2,cy=v.y+v.h/2;v.w=Math.min(IMG.w*1.4,Math.max(260,v.w/z));v.x=cx-v.w/2;v.y=cy-v.w*m.box.clientHeight/m.box.clientWidth/2;vb(m)}
+function draw(m,keep){if(!m.v)return;const sv=m.svg,s=m.v.w/m.box.clientWidth,fs=(m.box.clientWidth<600?9.5:12.5)*s;let h=`<image href="assets/campus-map.jpg" width="${IMG.w}" height="${IMG.h}" preserveAspectRatio="none"/><rect width="${IMG.w}" height="${IMG.h}" fill="#0b2a44" opacity=".12"/>`;
+  const up=m.upto,line=(e,c,w,x)=>`<line x1="${N[e.a].x}" y1="${N[e.a].y}" x2="${N[e.b].x}" y2="${N[e.b].y}" stroke="${c}" stroke-width="${w*s}" stroke-linecap="round" ${x||""}/>`;
+  const cand=R.log.filter(e=>up===null?e.s!=="A":false),done=R.log.slice(0,up===null?R.log.length:up);
+  if(up===null){if(showCand||sv.id==="m1")h+=R.log.filter(e=>e.s!=="A").map(e=>line(e,"#fff",2.4,`stroke-dasharray="${8*s} ${7*s}" opacity=".9"`)).join("")}
+  else{h+=R.log.slice(up).map(e=>line(e,"#fff",2,`stroke-dasharray="${8*s} ${7*s}" opacity=".55"`)).join("");h+=done.filter(e=>e.s==="R").map(e=>line(e,"#ff6b78",2.4,`stroke-dasharray="${5*s} ${5*s}"`)).join("")}
+  const acc=done.filter(e=>e.s==="A");h+=acc.map(e=>line(e,"#fff",9,'opacity=".45"')).join("")+acc.map(e=>line(e,"#09c27f",4.5)).join("");
+  h+=N.map(n=>`<circle cx="${n.x}" cy="${n.y}" r="${10*s}" fill="#1675ff" stroke="#fff" stroke-width="${3*s}"/>`).join("");
+  h+=N.map(n=>{const w=n.name.length*fs*.58+fs*1.6,hh=fs*2,y=n.l==="u"?n.y-22*s-hh:n.y+22*s;return`<g><rect x="${n.x-w/2}" y="${y}" width="${w}" height="${hh}" rx="${fs*.6}" fill="#fff" filter="drop-shadow(0 2px 3px #0003)"/><text x="${n.x}" y="${y+hh*.68}" text-anchor="middle" font-family="DM Sans" font-weight="600" font-size="${fs}" fill="#15294c">${n.name}</text></g>`}).join("");
+  sv.innerHTML=h;}
+function place(m,e){const r=m.svg.getBoundingClientRect(),v=m.v,x=v.x+(e.clientX-r.left)/r.width*v.w,y=v.y+(e.clientY-r.top)/r.height*v.h;
+  const id=N.length;N.push({name:placing,x:Math.round(x),y:Math.round(y),l:"u"});
+  N.map((n,i)=>({i,d:Math.hypot(n.x-x,n.y-y)})).filter(o=>o.i!==id).sort((a,b)=>a.d-b.d).slice(0,3).forEach(o=>E.push({a:id,b:o.i,c:Math.round(o.d*RATE/10)*10}));
+  $("placeMsg").textContent=`${placing} added and linked to its 3 nearest buildings. MST recalculated.`;placing=null;calc();render();}
+/* ---------- render ---------- */
+function render(){const r=R;
+  $("kAll").textContent=inr(r.tot);$("kMst").textContent=inr(r.mst);$("kPct").textContent=r.pct.toFixed(1)+"%";$("kSave").textContent=inr(r.tot-r.mst)+" saved";
+  const conn=N.length-r.iso;$("kBld").textContent=`${conn} / ${N.length}`;$("sB").textContent=conn;$("sE").textContent=r.k;$("sI").textContent=r.iso;
+  const full=r.k===N.length-1;$("okbox").innerHTML=full?"✔ &nbsp;All buildings connected<small>The campus is fully connected using Minimum Spanning Tree (Kruskal's Algorithm).</small>":"⚠ &nbsp;Network is not fully connected<small>Some buildings have no candidate route to the rest of the campus.</small>";
+  const d=r.when.toLocaleString("en-US",{month:"short",day:"numeric",year:"numeric",hour:"numeric",minute:"2-digit"});$("stamp").textContent="Live calculation";
+  $("res").innerHTML=`<tr><td>1</td><td>Minimum Spanning Tree (Kruskal)</td><td>${N.length}</td><td>${r.mst.toLocaleString("en-IN")}</td><td class="good">${r.pct.toFixed(1)}%</td><td>${d}</td></tr><tr><td>2</td><td>All Possible Connections</td><td>${N.length}</td><td>${r.tot.toLocaleString("en-IN")}</td><td>-</td><td>${d}</td></tr>`;
+  $("costK").innerHTML=[["r","link","All Connections",inr(r.tot),"Baseline estimate"],["g","bolt","MST Cost",inr(r.mst),"Minimum modeled cost"],["b","bars","Cost Reduction",r.pct.toFixed(1)+"%",inr(r.tot-r.mst)+" difference"],["p","nodes","Cable Edges",r.k,`For ${N.length} buildings`]].map(k=>`<div class="kpi"><div class="ki ${k[0]}"><svg class="i"><use href="#${k[1]}"/></svg></div><div><div class="kl">${k[2]}</div><div class="kv">${k[3]}</div><div class="kn">${k[4]}</div></div></div>`).join("");
+  $("bA").style.height="100%";$("bA").innerHTML=`<b>${inr(r.tot)}</b>`;$("bM").style.height=(r.tot?r.mst/r.tot*100:0)+"%";$("bM").innerHTML=`<b>${inr(r.mst)}</b>`;
+  $("cab").innerHTML=r.log.filter(e=>e.s==="A").map(e=>`<tr><td>${ename(e)}</td><td class="good">${e.c.toLocaleString("en-IN")}</td></tr>`).join("");
+  $("bl").innerHTML=N.map((n,i)=>`<div class="bi"><i>${n.name[0]}</i><div><b style="font-size:13.5px">${n.name}</b><small>${r.deg[i]} cable${r.deg[i]===1?"":"s"} in MST</small></div></div>`).join("");
+  $("rs").innerHTML=E.map((e,i)=>`<option value="${i}">${ename(e)} (${inr(e.c)})</option>`).join("");$("rc").value=E[0]?E[0].c:"";
+  const rng=$("rng");rng.max=r.log.length;stepUI();Object.values(maps).forEach(m=>{fit(m);draw(m)});}
+function stepUI(){const r=R,L=r.log,upto=step;maps.m3.upto=step;draw(maps.m3);
+  const acc=L.slice(0,upto).filter(e=>e.s==="A"),rej=L.slice(0,upto).filter(e=>e.s==="R");
+  $("stepLbl").textContent=`Step ${upto} of ${L.length}`;$("rng").value=upto;$("lSel").textContent=`${acc.length} / ${N.length-1}`;$("lCost").textContent=inr(acc.reduce((s,e)=>s+e.c,0));$("lRej").textContent=rej.length;
+  $("steps").innerHTML=upto===0?`<div class="step cur"><div class="n">0</div><div>Sort all ${L.length} candidate edges by cost (ascending)<small>Cheapest: ${ename(L[0])} — ${inr(L[0].c)}</small></div></div>`:L.slice(0,upto).map((e,i)=>`<div class="step ${e.s} ${i===upto-1?"cur":""}"><div class="n">${e.s==="A"?"✓":e.s==="R"?"✕":"–"}</div><div>${ename(e)} — ${inr(e.c)}<small>${e.s==="A"?"Accepted: joins two separate groups":e.s==="R"?"Rejected: both ends already connected (would form a cycle)":"Skipped: tree already has V − 1 edges"}</small></div></div>`).join("");
+  $("steps").scrollTop=1e5;$("prev").disabled=upto===0;$("next").disabled=upto>=L.length;}
+/* ---------- wiring ---------- */
+const PAGES=[["overview","home","Overview"],["map","map","Campus Map"],["algorithm","nodes","Algorithm Steps"],["cost","bars","Cost Analysis"],["buildings","bld","Buildings"],["scenarios","sl","Scenarios"]];
+$("nav").innerHTML=PAGES.map(p=>`<button data-page="${p[0]}"><svg class="i"><use href="#${p[1]}"/></svg>${p[2]}</button>`).join("");
+$("mnav").innerHTML=PAGES.map(p=>`<button data-page="${p[0]}">${p[2].replace(" Steps","")}</button>`).join("");
+function go(n){PAGES.forEach(p=>$("p-"+p[0]).classList.toggle("active",p[0]===n));document.querySelectorAll("[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===n));$("mnav").classList.remove("open");scrollTo({top:0});requestAnimationFrame(()=>Object.values(maps).forEach(m=>{fit(m);draw(m)}))}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-page],[data-go],[data-z]");if(!b)return;if(b.dataset.z)return zoom(maps["m"+b.dataset.m],+b.dataset.z);go(b.dataset.page||b.dataset.go)});
+$("menu").onclick=()=>$("mnav").classList.toggle("open");
+$("tgl").onclick=()=>{showCand=!showCand;draw(maps.m2)};
+$("next").onclick=()=>{step=Math.min(R.log.length,step+1);stepUI()};$("prev").onclick=()=>{step=Math.max(0,step-1);stepUI()};
+const stop=()=>{clearInterval(timer);timer=0;$("play").textContent="▶ Auto play"};
+$("reset").onclick=()=>{stop();step=0;stepUI()};$("rng").oninput=e=>{step=+e.target.value;stepUI()};
+$("play").onclick=()=>{if(timer)return stop();if(step>=R.log.length)step=0;$("play").textContent="Ⅱ Pause";timer=setInterval(()=>{if(step>=R.log.length)return stop();step++;stepUI()},900)};
+$("upR").onclick=()=>{const c=Number($("rc").value),i=+$("rs").value;if(!Number.isFinite(c)||c<0||$("rc").value==="")return $("mR").textContent="Enter a valid non-negative cost.";const old=R.mst;E[i].c=Math.round(c);calc();const d=R.mst-old;render();$("rs").value=i;$("mR").textContent=`Recalculated. MST cost is now ${inr(R.mst)} (${d===0?"unchanged — this route is not in the MST or still isn't the cheapest option":(d>0?"+":"−")+inr(Math.abs(d))}).`};
+$("rs").onchange=()=>$("rc").value=E[+$("rs").value].c;
+$("rstAll").onclick=()=>{load();render();$("mR").textContent="All costs and buildings reset."};
+$("addB").onclick=()=>{const n=$("nb").value.trim();if(!n)return $("mB").textContent="Enter a building name first.";if(N.some(b=>b.name.toLowerCase()===n.toLowerCase()))return $("mB").textContent="That building already exists.";placing=n;$("nb").value="";$("mB").textContent="";go("map");$("placeMsg").textContent=`Click on the map to place “${n}”.`;};
+mapInit("m1","mf1");mapInit("m2","mf2");mapInit("m3","mf3");load();render();go("overview");
+</script>
+</body>
+</html>
